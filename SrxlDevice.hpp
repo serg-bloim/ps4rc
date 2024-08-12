@@ -206,10 +206,21 @@ public:
       ch.value = 0;
     }
   }
+
+  void begin(size_t pin) {
+    ((SrxlDevice*)this)->begin(pin);
+    srxl.set_channel(4, 0xD540); // beginner
+    // srxl.set_channel(4, 0x8000); // advanced
+    // srxl.set_channel(4, 0x2AC0); // expert
+    srxl.set_channel(5, 0xD540); // no panic mode
+  }
   
   void set_channel(uint8_t ch, uint16_t v) {
+    const int32_t MIN_RANGE = -0xFFFF;
+    const int32_t MAX_RANGE = +0xFFFF;
+    uint16_t srxl2_v = map(cap(v, MIN_RANGE, MAX_RANGE), MIN_RANGE, MAX_RANGE, 0x2AA0, 0xD554);
     assert(ch < arraySize(this->channels));
-    this->channels[ch].value = v;
+    this->channels[ch].value = srxl2_v;
   }
 
   void enable_channel(uint8_t ch, bool enabled) {

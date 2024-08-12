@@ -2,6 +2,7 @@
 #include <PS4Controller.h>
 #include <functional>
 #include "utils.hpp"
+#include "esp_gap_bt_api.h"
 
 class Ps4Client;
 void on_packet_received_global();
@@ -18,8 +19,9 @@ public:
     inst2 = this;
   }
   void begin(const char* mac) {
-    ps4controller.begin(mac);
     ps4controller.attach(on_packet_received_global);
+    ps4controller.begin(mac);
+    this->removePairedDevices(); // This helps to solve connection issues
   }
   void on_packet_received() {
     throttle = parseThrottle();
@@ -28,6 +30,14 @@ public:
     yaw = parseSlider(ps4controller.LStickX());
   }
 protected:
+  void removePairedDevices() {
+    uint8_t pairedDeviceBtAddr[20][6];
+    int count = esp_bt_gap_get_bond_device_num();
+    esp_bt_gap_get_bond_device_list(&count, pairedDeviceBtAddr);
+    for (int i = 0; i < count; i++) {
+      esp_bt_gap_remove_bond_device(pairedDeviceBtAddr[i]);
+    }
+  }
 private:
   PS4Controller& ps4controller;
   int32_t parseThrottle(){
