@@ -1,7 +1,7 @@
 # PS4RC
 
 ## Goal
-To connect a PS4 controller as a student to an RC transmitter.
+To connect a PS4 controller as a student to an RC transmitter using ESP32.
 
 ## Idea
 The idea behind the project is to make an affordable second controller for an RC model that can function as a student controller in a teacher/student scenario. The primary audience of this project are probably people who do not have multiple transmitters and receivers to connect them together, but have a friend or a child who wants to fly a model, but needs assistance.
