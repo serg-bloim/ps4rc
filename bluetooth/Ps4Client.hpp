@@ -1,7 +1,7 @@
 #pragma once
 #include <PS4Controller.h>
 #include <functional>
-#include "utils.hpp"
+#include "../utils/utils.hpp"
 #include "esp_gap_bt_api.h"
 
 class Ps4Client;

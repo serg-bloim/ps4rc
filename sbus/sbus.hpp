@@ -1,9 +1,9 @@
 #ifndef SBUS_H
 #define SBUS_H
 #include <Arduino.h>
-#include "utils.hpp"
+#include "../utils/utils.hpp"
+#include "../utils/ByteBuffer.hpp"
 #include "SoftwareSerial.h"
-#include "ByteBuffer.hpp"
 
 using SbusByteBuffer = StaticByteBuffer<25>;
 
@@ -16,6 +16,11 @@ private:
 
 protected:
 public:
+    const uint8_t CH_RUDDER = 0;
+    const uint8_t CH_ELEVATOR = 1;
+    const uint8_t CH_THROTTLE = 2;
+    const uint8_t CH_AILERON = 3;
+
   Sbus(SoftwareSerial &serial, int time_frame = 14)
     : serial(serial),
       time_frame(time_frame) {
@@ -66,7 +71,7 @@ public:
   void set_channel(uint8_t ch, int32_t v) {
     const int32_t MIN_RANGE = -0xFFFF;
     const int32_t MAX_RANGE = +0xFFFF;
-    uint16_t sbus_v = map(cap(v, MIN_RANGE, MAX_RANGE), MIN_RANGE, MAX_RANGE, 0, 2047)
+    uint16_t sbus_v = map(cap(v, MIN_RANGE, MAX_RANGE), MIN_RANGE, MAX_RANGE, 0, 2047);
     assert(ch < arraySize(this->channels));
     this->channels[ch] = sbus_v;
   }

@@ -1,12 +1,12 @@
 #ifndef SrxlDevice_H
 #define SrxlDevice_H
 #include <Arduino.h>
-#include "utils.hpp"
+#include "../utils/utils.hpp"
+#include "../utils/ByteBuffer.hpp"
+#include "../utils/List.hpp"
 #include "SoftwareSerial.h"
-#include "ByteBuffer.hpp"
 #include "SrxlCommon.hpp"
 #include "SrxlStreamReader.hpp"
-#include "List.hpp"
 
 class SrxlDevice {
 private:
@@ -198,6 +198,12 @@ protected:
   }
 
 public:
+    const uint8_t CH_THROTTLE = 0;
+    const uint8_t CH_AILERON = 1;
+    const uint8_t CH_ELEVATOR = 2;
+    const uint8_t CH_RUDDER = 3;
+    const uint8_t CH_SAFE_MODE = 4;
+    const uint8_t CH_PANIC_MODE = 5;
   SrxlMaster(SoftwareSerial &serial, SrxlDeviceID id, int time_frame = 22)
     : SrxlDevice(serial, id, time_frame) {
     reset();
@@ -209,15 +215,24 @@ public:
 
   void begin(size_t pin) {
     ((SrxlDevice*)this)->begin(pin);
-    srxl.set_channel(4, 0xD540); // beginner
-    // srxl.set_channel(4, 0x8000); // advanced
-    // srxl.set_channel(4, 0x2AC0); // expert
-    srxl.set_channel(5, 0xD540); // no panic mode
+    this->enable_channel(0, true);
+    this->enable_channel(1, true);
+    this->enable_channel(2, true);
+    this->enable_channel(3, true);
+    this->enable_channel(4, true);
+    this->enable_channel(5, true);
+    this->set_channel(CH_SAFE_MODE, +0xFFFF); // beginner
+    // this->set_channel(4, 0); // advanced
+    // this->set_channel(4, -0xFFFF); // expert
+    this->set_channel(CH_PANIC_MODE, +0xFFFF); // no panic mode
   }
   
-  void set_channel(uint8_t ch, uint16_t v) {
+  void set_channel(uint8_t ch, int32_t v) {
     const int32_t MIN_RANGE = -0xFFFF;
     const int32_t MAX_RANGE = +0xFFFF;
+    if(ch == CH_RUDDER || ch == CH_AILERON){
+        v = -v;
+    }
     uint16_t srxl2_v = map(cap(v, MIN_RANGE, MAX_RANGE), MIN_RANGE, MAX_RANGE, 0x2AA0, 0xD554);
     assert(ch < arraySize(this->channels));
     this->channels[ch].value = srxl2_v;

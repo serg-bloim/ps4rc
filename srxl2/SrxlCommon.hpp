@@ -1,6 +1,6 @@
 #ifndef SrxlCommon_H
 #define SrxlCommon_H
-#include "ByteBuffer.hpp"
+#include "../utils/ByteBuffer.hpp"
 #include "crc.hpp"
 
 using SrxlByteBuffer = StaticByteBuffer<100>;

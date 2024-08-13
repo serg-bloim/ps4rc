@@ -2,8 +2,8 @@
 #define SrxlStreamReader_H
 
 #include "Arduino.h"
-#include "usings.h"
-#include "ByteBuffer.hpp"
+#include "../utils/usings.h"
+#include "../utils/ByteBuffer.hpp"
 #include "SrxlCommon.hpp"
 #include "crc.hpp"
 
