@@ -17,3 +17,5 @@ The idea behind the project is to make an affordable second controller for an RC
 - Bluetooth pairing.
 - Connection via external rf module pins. 
   Many radios feature a bay for an external rf module. If not in use, it’s handy to store and connect the PS4RC module.
+
+If you want to build the project yourself, pleaes refer to the [Assembly instructions wiki](https://github.com/serg-bloim/ps4rc/wiki/Assembly-instructions)
