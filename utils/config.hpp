@@ -51,6 +51,7 @@ public:
     void update(){
         if(line_reader.available()){
              String line = line_reader.readLine();
+             Serial.printf("Received cmd: '%s'\n", line.c_str());
              line.trim();
              if(!line.isEmpty()){
                if(line.startsWith("set ")){

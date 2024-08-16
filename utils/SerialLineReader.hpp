@@ -29,6 +29,8 @@ class SerialLineReader{
         String readLine(){
             assert(has_line);
             has_line = false;
-            return line;
+            String result = line;
+            line = "";
+            return result;
         }
 };
