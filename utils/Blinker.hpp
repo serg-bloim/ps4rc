@@ -14,6 +14,9 @@ public:
   void begin(){
     pinMode(pin, OUTPUT);
   }
+  void set_delay(size_t delay){
+    this->delay = delay;
+  }
   void update(){
     // Serial.println(1);
     if(millis() > next_ts){
