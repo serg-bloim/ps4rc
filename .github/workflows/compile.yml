@@ -1,0 +1,52 @@
+name: Arduino Build
+
+on: [workflow_dispatch, workflow_call]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        serial_mode: [SBUS, SRXL]
+
+    env:
+      build_file_name: ps4rc_${{ github.ref_name }}_${{ matrix.serial_mode }}.zip
+    steps:
+
+    - name: Set up Arduino CLI
+      uses: arduino/setup-arduino-cli@v2
+
+    - name: Install Arduino libraries
+      run: |
+        arduino-cli lib install EspSoftwareSerial@8.1.0 PS4Controller@1.0.8 CRC@1.0.3
+
+    - name: Install Arduino core
+      run: |
+        arduino-cli core update-index
+        arduino-cli core install esp32:esp32@2.0.11
+
+    - name: Checkout another repository
+      uses: actions/checkout@v4
+
+    - name: Compile Arduino sketch
+      run: |
+        arduino-cli compile -e --fqbn esp32:esp32:esp32doit-devkit-v1 --build-property compiler.cpp.extra_flags=-DSERIAL_MODE=${{ matrix.serial_mode }} .
+
+    - name: Export compiled binary
+      run: |
+        esp32_boot_file=~/.arduino15/packages/esp32/hardware/esp32/2.0.11/tools/partitions/boot_app0.bin
+        dst=arch
+        mkdir -p $dst
+        mkdir -p artifacts
+        cp build/esp32.esp32.esp32doit-devkit-v1/ps4rc.ino.bootloader.bin                   $dst/ps4rc_${GITHUB_REF_NAME}_${{ matrix.serial_mode }}_partA_0x1000.bin
+        cp build/esp32.esp32.esp32doit-devkit-v1/ps4rc.ino.partitions.bin                   $dst/ps4rc_${GITHUB_REF_NAME}_${{ matrix.serial_mode }}_partB_0x8000.bin
+        cp ~/.arduino15/packages/esp32/hardware/esp32/2.0.11/tools/partitions/boot_app0.bin $dst/ps4rc_${GITHUB_REF_NAME}_${{ matrix.serial_mode }}_partC_0xE000.bin
+        cp build/esp32.esp32.esp32doit-devkit-v1/ps4rc.ino.bin                              $dst/ps4rc_${GITHUB_REF_NAME}_${{ matrix.serial_mode }}_partD_0x10000.bin
+        zip -r artifacts/${build_file_name} $dst/*
+
+    - name: Upload the compiled binary as an artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.build_file_name }}
+        path: artifacts/${{ env.build_file_name }}

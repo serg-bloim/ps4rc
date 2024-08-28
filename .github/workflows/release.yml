@@ -1,0 +1,27 @@
+name: Release
+
+on:
+  workflow_dispatch: {}
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    uses: ./.github/workflows/compile.yml
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dwld
+      - run: |
+          find .
+      - run: |
+          gh release upload -R ${GITHUB_REPOSITORY} ${{ github.event.release.tag_name }} dwld/**/*.zip
+        env:
+          GH_TOKEN: ${{ github.token }}
+    needs:
+      - build
