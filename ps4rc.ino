@@ -9,17 +9,16 @@
 
 SoftwareSerial serial;
 #if SERIAL_MODE == SRXL
-
-#include "srxl2/RemoteReceiver.hpp"
-RemoteReceiver itx(serial, DEVICES_REMOTE_RECEIVER);
-
+  #include "srxl2/RemoteReceiver.hpp"
+  #define SERIAL_MODE_STR "SRXL"
+  RemoteReceiver itx(serial, DEVICES_REMOTE_RECEIVER);
 #elif SERIAL_MODE == SBUS
-
-#include "sbus/sbus.hpp"
-Sbus itx(serial);
-
+  #define SERIAL_MODE_STR "SBUS"
+  #include "sbus/sbus.hpp"
+  Sbus itx(serial);
 #else
-    #error "SERIAL_MODE should be 1 of : SRXL, SBUS"
+  #define SERIAL_MODE_STR "NONE"
+  #error "SERIAL_MODE should be 1 of : SRXL, SBUS"
 #endif
 Blinker blk(2, 500);
 Ps4Client ps4;
@@ -41,6 +40,7 @@ void setup() {
         bt_address = PS4_BT_ADDR;
     }
     Serial.println("Starting in normal mode");
+    Serial.println("Serial mode: " SERIAL_MODE_STR);
     Serial.printf("bt_address = '%s'\n", bt_address.c_str());
     blk.set_delay(500);
     itx.begin(SERIAL_PIN);

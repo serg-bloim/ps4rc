@@ -1,9 +1,16 @@
 #define SRXL 1
 #define SBUS 2
-
 #ifndef SERIAL_MODE
 // #define SERIAL_MODE SRXL
 #define SERIAL_MODE SBUS
+#endif
+
+#if SERIAL_MODE == SRXL
+#endif
+
+#if SERIAL_MODE == SBUS
+#warning "This is a warning message 2"
+#define SERIAL_MODE_STR "SBUS"
 #endif
 
 String PS4_BT_ADDR = "50:54:4E:50:4E:58";
