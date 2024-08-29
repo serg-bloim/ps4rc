@@ -36,9 +36,9 @@ public:
     this->time_frame_start = millis();
     this->time_frame_next = time_frame_start + time_frame;
   }
-  void begin(size_t pin) {
+  void begin(size_t pin, bool inverted = false) {
     serial.enableRxGPIOPullUp(true);
-    serial.begin(115200, EspSoftwareSerial::Config::SWSERIAL_8N1, pin, pin, false, 256);
+    serial.begin(115200, EspSoftwareSerial::Config::SWSERIAL_8N1, pin, pin, inverted, 256);
     serial.enableIntTx(false);
     serial.enableTx(false);
   }
@@ -213,8 +213,8 @@ public:
     }
   }
 
-  void begin(size_t pin) {
-    ((SrxlDevice*)this)->begin(pin);
+  void begin(size_t pin, bool inverted = false) {
+    ((SrxlDevice*)this)->begin(pin, inverted);
     this->enable_channel(0, true);
     this->enable_channel(1, true);
     this->enable_channel(2, true);
