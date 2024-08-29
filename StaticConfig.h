@@ -12,8 +12,9 @@
 #define SERIAL_MODE_STR "SBUS"
 #endif
 
-String PS4_BT_ADDR = "50:54:4E:50:4E:58";
-#define SERIAL_PIN 13
+String DEFAULT_PS4_BT_ADDR = "50:54:4E:50:4E:58";
+#define DEFAULT_SERIAL_PIN 13
+#define DEFAULT_SERIAL_INVERTED false
 #define CONFIG_PIN_OUT 26
 #define CONFIG_PIN_IN 27
 

@@ -29,9 +29,9 @@ public:
       this->channels[i] = 0;
     }
   }
-  void begin(size_t pin) {
+  void begin(size_t pin, bool inverted = false) {
     serial.enableRxGPIOPullUp(true);
-    serial.begin(100000, EspSoftwareSerial::Config::SWSERIAL_8E2, pin, pin, false, 256);
+    serial.begin(100000, EspSoftwareSerial::Config::SWSERIAL_8E2, pin, pin, inverted, 256);
     serial.enableIntTx(false);
     serial.enableTx(true);
   }

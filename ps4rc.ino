@@ -31,14 +31,15 @@ void setup() {
   config.begin();
   blk.begin();
   delay(1000);
-  
+
+  String bt_address;
+  int serial_pin;
+  bool inverted;
+  read_config(bt_address, serial_pin, inverted);
   Serial.println("PS4RC version: " PS4RC_VERSION);
-  String bt_address = prefs.getString("bt_address");
-  if(bt_address.isEmpty()){
-      bt_address = PS4_BT_ADDR;
-  }
   Serial.println("Serial mode: " SERIAL_MODE_STR);
   Serial.printf("bt_address = '%s'\n", bt_address.c_str());
+  Serial.printf("serial_pin = '%d'\n", serial_pin);
 
   if(config.enabled()){
     Serial.println("Starting in configuration mode");
@@ -46,11 +47,32 @@ void setup() {
   }else{
     Serial.println("Starting in normal mode");
     blk.set_delay(500);
-    itx.begin(SERIAL_PIN);
+    itx.begin(serial_pin, inverted);
     ps4.begin(bt_address.c_str());
   }
 }
-
+void read_config(String &bt_address, int &serial_pin, bool &inverted){
+    bt_address = prefs.getString("bt_address");
+    if(bt_address.isEmpty()){
+        bt_address = DEFAULT_PS4_BT_ADDR;
+    }
+    String serial_pin_str = prefs.getString("serial_pin");
+    serial_pin = serial_pin_str.toInt();
+    if(serial_pin == 0){
+        Serial.printf("Cannot parse serial_pin='%s', using the default value\n", serial_pin_str.c_str());
+        serial_pin = DEFAULT_SERIAL_PIN;
+    }
+    String inverted_str = prefs.getString("serial_inverted");
+    inverted_str.toLowerCase();
+    if(inverted_str == "true"){
+        inverted = true;
+    }else if(inverted_str == "false"){
+        inverted = false;
+    }else{
+        Serial.printf("Cannot parse serial_inverted='%s', using the default value\n", inverted_str.c_str());
+        inverted = DEFAULT_SERIAL_INVERTED;
+    }
+}
 void loop() {
   blk.update();
   if(config.enabled()){
