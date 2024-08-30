@@ -1,8 +1,10 @@
 #include <Preferences.h>
+#include <PS4Controller.h>
 #include "StaticConfig.h"
 #include <SoftwareSerial.h>
 #include "utils/utils.hpp"
 #include "utils/Blinker.hpp"
+#include "utils/BlinkLibrary.hpp"
 #include "utils/config.hpp"
 #include "bluetooth/Ps4Client.hpp"
 #include "sbus/sbus.hpp"
@@ -20,18 +22,18 @@ SoftwareSerial serial;
   #define SERIAL_MODE_STR "NONE"
   #error "SERIAL_MODE should be 1 of : SRXL, SBUS"
 #endif
-Blinker blk(2, 500);
+Blinker blk(2);
 Ps4Client ps4;
 Preferences prefs;
 Configurator config(prefs, CONFIG_PIN_OUT, CONFIG_PIN_IN);
+bool ps4connected;
 
 void setup() {
   Serial.begin(115200);
   prefs.begin("app", RO_MODE);
   config.begin();
   blk.begin();
-  delay(1000);
-
+  ps4connected = ps4.connected();
   String bt_address;
   int serial_pin;
   bool inverted;
@@ -43,14 +45,15 @@ void setup() {
 
   if(config.enabled()){
     Serial.println("Starting in configuration mode");
-    blk.set_delay(200);
+    blk.set_pattern(BlinkLibrary::CONFIGURATION);
   }else{
     Serial.println("Starting in normal mode");
-    blk.set_delay(500);
+    blk.set_pattern(BlinkLibrary::NORMAL_DISCONNECTED);
     itx.begin(serial_pin, inverted);
     ps4.begin(bt_address.c_str());
   }
 }
+
 void read_config(String &bt_address, int &serial_pin, bool &inverted){
     bt_address = prefs.getString("bt_address");
     if(bt_address.isEmpty()){
@@ -78,6 +81,14 @@ void loop() {
   if(config.enabled()){
     config.update();
   }else{
+      if(ps4.connected() != ps4connected){
+        ps4connected = ps4.connected();
+        if(ps4connected){
+            blk.set_pattern(BlinkLibrary::NORMAL_CONNECTED);
+        }else{
+            blk.set_pattern(BlinkLibrary::NORMAL_DISCONNECTED);
+        }
+      }
       itx.set_channel(itx.CH_THROTTLE, ps4.throttle);
       itx.set_channel(itx.CH_AILERON, ps4.roll);
       itx.set_channel(itx.CH_ELEVATOR, ps4.pitch);

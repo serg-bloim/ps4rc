@@ -29,6 +29,9 @@ public:
     roll = parseSlider(ps4controller.RStickX());
     yaw = parseSlider(ps4controller.LStickX());
   }
+  bool connected(){
+    return ps4controller.isConnected();
+  }
 protected:
   void removePairedDevices() {
     uint8_t pairedDeviceBtAddr[20][6];
