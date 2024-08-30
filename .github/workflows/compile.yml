@@ -31,7 +31,7 @@ jobs:
 
     - name: Compile Arduino sketch
       run: |
-        arduino-cli compile -e --fqbn esp32:esp32:esp32doit-devkit-v1 --build-property compiler.cpp.extra_flags=-DSERIAL_MODE=${{ matrix.serial_mode }} .
+        arduino-cli compile -e --fqbn esp32:esp32:esp32doit-devkit-v1 --build-property compiler.cpp.extra_flags='-DSERIAL_MODE=${{ matrix.serial_mode }} -DPS4RC_VERSION="${{ github.ref_name }}"' .
 
     - name: Export compiled binary
       run: |
