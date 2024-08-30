@@ -31,17 +31,20 @@ void setup() {
   config.begin();
   blk.begin();
   delay(1000);
+  
+  Serial.println("PS4RC version: " PS4RC_VERSION);
+  String bt_address = prefs.getString("bt_address");
+  if(bt_address.isEmpty()){
+      bt_address = PS4_BT_ADDR;
+  }
+  Serial.println("Serial mode: " SERIAL_MODE_STR);
+  Serial.printf("bt_address = '%s'\n", bt_address.c_str());
+
   if(config.enabled()){
     Serial.println("Starting in configuration mode");
     blk.set_delay(200);
   }else{
-    String bt_address = prefs.getString("bt_address");
-    if(bt_address.isEmpty()){
-        bt_address = PS4_BT_ADDR;
-    }
     Serial.println("Starting in normal mode");
-    Serial.println("Serial mode: " SERIAL_MODE_STR);
-    Serial.printf("bt_address = '%s'\n", bt_address.c_str());
     blk.set_delay(500);
     itx.begin(SERIAL_PIN);
     ps4.begin(bt_address.c_str());
