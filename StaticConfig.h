@@ -21,3 +21,7 @@ String DEFAULT_PS4_BT_ADDR = "50:54:4E:50:4E:58";
 #ifndef PS4RC_VERSION
 #define PS4RC_VERSION "undefined"
 #endif
+
+#ifndef PS4RC_CODE_REV
+#define PS4RC_CODE_REV "undefined"
+#endif

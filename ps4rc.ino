@@ -39,6 +39,7 @@ void setup() {
   bool inverted;
   read_config(bt_address, serial_pin, inverted);
   Serial.println("PS4RC version: " PS4RC_VERSION);
+  Serial.println("PS4RC code revision: " PS4RC_CODE_REV);
   Serial.println("Serial mode: " SERIAL_MODE_STR);
   Serial.printf("bt_address = '%s'\n", bt_address.c_str());
   Serial.printf("serial_pin = '%d'\n", serial_pin);
